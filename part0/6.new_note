@@ -1,0 +1,14 @@
+Title 0.6
+
+note over browser:
+assuming browser already loaded everything from previous exercise
+User enter text and click save
+end note
+
+browser->server: AJAX HTTP POST to https://studies.cs.helsinki.fi/exampleapp/exampleapp/new_note_spa
+server-->browser: 201 ok
+
+note over browser:
+After getting 201 from the AJAX call. 
+The browser js code execute and render the saved text
+end note

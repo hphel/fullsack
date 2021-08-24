@@ -1,0 +1,28 @@
+title 0.4
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+note over browser:
+Assuming browser already loaded the page like example diagram
+User enter text into the text input box and click save. This trigger the first POST request
+end note
+
+server-->browser: Redirect to https://studies.cs.helsinki.fi/exampleapp/notes
+
+
+note over server:
+server receive the POST request process it and redirect user back to the notes page. 
+Everything from here is pretty much the same as example diagram
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: HTML-code
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: data.json
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/favicon.ico
+server-->browser: /favicon.ico
+
+
