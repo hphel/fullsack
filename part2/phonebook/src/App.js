@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import api from './persons'
 
 
@@ -11,6 +12,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setFilter ] = useState('')
+  const [ message, setMessage ] = useState(null)
 
   useEffect(() => {    
     api.getAll().then((response) => setPersons(response.data));
@@ -31,6 +33,22 @@ const App = () => {
               newPerson
             ]
             setPersons(newPersons)
+            setMessage({
+              content: `Updated ${newPerson.name}`,
+              status: "success"
+            })
+          }
+        }).catch(e => {
+          if (e.response.status === 404) {
+            setMessage({
+              content: `Information of ${newPerson.name} has already been removed from the server`,
+              status: "error"
+            })
+          } else {
+            setMessage({
+              content: `Failed to update ${newPerson.name}`,
+              status: "error"
+            })
           }
         })
       }
@@ -47,7 +65,16 @@ const App = () => {
             newPerson
           ]
           setPersons(newPersons)
+          setMessage({
+            content: `Added ${newPerson.name}`,
+            status: "success"
+          })
         }
+      }).catch(e => {
+        setMessage({
+          content: `Failed to add ${newPerson.name}`,
+          status: "error"
+        })
       })
     }
   }
@@ -56,8 +83,24 @@ const App = () => {
     if (window.confirm(`Delete ${target.name} ?`)) {
       api.remove(id).then(response => {
         if (response.status === 200) {
-          const newPersons =  persons.filter(p => p.id !== id)
+          const newPersons = persons.filter(p => p.id !== id)
           setPersons(newPersons)
+          setMessage({
+            content: `Removed ${target.name}`,
+            status: "success"
+          })
+        } 
+      }).catch(e => {
+        if (e.response.status === 404) {
+          setMessage({
+            content: `Information of ${target.name} has already been removed from the server`,
+            status: "error"
+          })
+        } else {
+          setMessage({
+            content: `Failed to remove ${target.name}`,
+            status: "error"
+          })
         }
       })
     }
@@ -68,6 +111,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter onChange={(e) => setFilter(e.target.value)}/>
       <PersonForm 
         onSubmit={onSubmit} 
