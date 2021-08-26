@@ -63,7 +63,7 @@ app.post('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    res.status(200).json(persons)
 })
 
 app.get('/api/persons/:personId', function (req, res) {
