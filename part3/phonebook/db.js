@@ -3,7 +3,7 @@ const uniqueValidator = require('mongoose-unique-validator')
 
 const url = process.env.MONGODB_URI
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-    .then(result => {
+    .then(() => {
         console.log('connected to MongoDB')  
     })  
     .catch((error) => {
@@ -22,18 +22,18 @@ const PhoneRecord = mongoose.model('PhoneRecord', phoneRecordSchema)
 
 
 exports.getAll = function () {
-    return PhoneRecord.find({});
+    return PhoneRecord.find({})
 }
 
 exports.add = function (name, number) { 
     return PhoneRecord.find({})
-    .sort({ id: -1 })
-    .limit(1)
-    .then(items => new PhoneRecord({
-        name: name,
-        number: number,
-        id: items.length > 0 ? items[0].id + 1 : 1,
-    }).save())
+        .sort({ id: -1 })
+        .limit(1)
+        .then(items => new PhoneRecord({
+            name: name,
+            number: number,
+            id: items.length > 0 ? items[0].id + 1 : 1,
+        }).save())
 }
 
 exports.remove = function (id) {

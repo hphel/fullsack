@@ -1,7 +1,7 @@
 const express = require('express')
-const bodyParser = require('body-parser');
-const db = require('./db');
-const middleware = require('./middleware');
+const bodyParser = require('body-parser')
+const db = require('./db')
+const middleware = require('./middleware')
 const app = express()
 const PORT = process.env.PORT || 3001
 
@@ -24,13 +24,13 @@ app.post('/api/persons', (req, res, next) => {
     const newPerson = req.body
     if (newPerson.name && newPerson.number) {
         return db.add(newPerson.name, newPerson.number)
-        .then(_ => {
-            return res.status(201).end()
-        })
-        .catch(error => next(error))
+            .then(() => {
+                return res.status(201).end()
+            })
+            .catch(error => next(error))
     } else {
         return res.status(400).json({
-            error: `Name or number is missing`
+            error: 'Name or number is missing'
         })
     }
 })
@@ -73,5 +73,5 @@ app.use(middleware.errorHandler)
 
 
 app.listen(PORT, () => {
-  console.log(`Server started at ${PORT}`)
+    console.log(`Server started at ${PORT}`)
 })
