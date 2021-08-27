@@ -2,9 +2,13 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const db = require('./db')
 const middleware = require('./middleware')
+const morgan = require('morgan')
 const app = express()
 const PORT = process.env.PORT || 3001
 
+morgan.token('body', (req, _) => JSON.stringify(req.body))
+
+app.use(morgan(':method :url :status :response-time ms - :body'))
 
 app.use(bodyParser.json())
 app.use(express.static('public'))
