@@ -1,14 +1,12 @@
 const mongoose = require('mongoose')
+const MockMongoose = require('mock-mongoose').MockMongoose;
+const mockMongoose = new MockMongoose(mongoose);
 const supertest = require('supertest')
 const bcrypt = require('bcrypt')
-
-const app = require('../app')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const tokens = require('../utils/tokens')
-
-
-const api = supertest(app)
+let api = null
 
 const blogs = [{
         title: 'Go To Statement Considered Harmful',
@@ -24,6 +22,12 @@ const blogs = [{
     }
 ]
 let token = ""
+
+beforeAll(async () => {
+    await mockMongoose.prepareStorage()
+    const app = require('../app')
+    api = supertest(app)
+})
 
 beforeEach(async () => {
     await Blog.deleteMany()
@@ -305,6 +309,7 @@ test('get users return all users', async () => {
     expect(response.body).toHaveLength(1)
 })
 
-afterAll(() => {
+afterAll(async () => {
     mongoose.connection.close()
+    await mockMongoose.killMongo()
 })
