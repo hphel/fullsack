@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import Blog from "./components/Blog";
+import React, { useState, useEffect } from "react";
+import LoginForm from "./components/LoginForm";
+import Content from "./components/Content";
 import Notification from "./components/Notification";
-import Togglable from "./components/Togglable";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -14,101 +14,6 @@ const notify = (message, handler, time=5000) => {
     setTimeout(() => {
         handler(null)
     }, time)
-}
-
-const LoginForm = ({ handleLogin, username, password, setUsername, setPassword }) => {
-
-    return <form onSubmit={handleLogin}>
-        <div>
-            username
-            <input
-                type="text"
-                value={username}
-                name="Username"
-                onChange={({ target }) => setUsername(target.value)}
-            />
-        </div>
-        <div>
-            password
-            <input
-                type="password"
-                value={password}
-                name="Password"
-                onChange={({ target }) => setPassword(target.value)}
-            />
-        </div>
-        <button type="submit">login</button>
-    </form>
-}
-
-const BlogForm = ({handleCreateBlog}) => {
-    const [title, setTitle] = useState("");
-    const [author, setAuthor] = useState("");
-    const [url, setURL] = useState("");
-
-    const createBlog = (e) => {
-        e.preventDefault()
-        handleCreateBlog({
-            title,
-            author,
-            url
-        })
-    }
-
-    return <form onSubmit={createBlog}>
-        <h3>Create new</h3>
-        <div>
-            Title
-            <input
-                type="text"
-                value={title}
-                name="title"
-                onChange={({ target }) => setTitle(target.value)}
-            />
-        </div>
-        <div>
-            Author
-            <input
-                type="text"
-                value={author}
-                name="Author"
-                onChange={({ target }) => setAuthor(target.value)}
-            />
-        </div>
-        <div>
-            URL
-            <input
-                type="text"
-                value={url}
-                name="URL"
-                onChange={({ target }) => setURL(target.value)}
-            />
-        </div>
-        <button type="submit">create</button>
-    </form>
-}
-
-const Content = ({ blogs, setBlogs, user, logOut, handleCreateBlog, onBlogLike, onBlogRemove }) => {
-    useEffect(() => {
-        blogService.getAll(user.token).then((blogs) => setBlogs(blogs));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    const blogFormRef = useRef()
-
-    return <div>
-        <h2>blogs</h2>
-        <div>
-            {user.username} logged in
-            <button onClick={logOut}> Log out </button>
-        </div>
-        <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-            <BlogForm handleCreateBlog={handleCreateBlog}/>
-        </Togglable>
-
-        {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} onLike={onBlogLike} onRemove={onBlogRemove} owned={blog.user.username === user.username} />
-        ))}
-    </div>
 }
 
 const App = () => {
@@ -155,7 +60,12 @@ const App = () => {
         try {
             const response = await blogService.add(user.token, blog)
             const newBlog = response.data
-            setSortedBlogs([...blogs, newBlog])
+            setSortedBlogs([...blogs, {
+                ...newBlog,
+                user: {
+                    username: user.username
+                }
+            }])
             notify({
                 status: "success",
                 content: `a new blog ${blog.title} by ${blog.author} added`
