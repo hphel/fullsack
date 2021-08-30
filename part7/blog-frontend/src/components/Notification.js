@@ -1,15 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types';
+import { Alert } from 'react-bootstrap';
 
 const Notification = ({ message }) => {
     if (message === null) {
       return null
     }
   
+    const variant = {
+      success: "success",
+      error: "danger"
+    }
     return (
-      <div className={message.status}>
+      <Alert variant={variant[message.status] || "info"}>
         {message.content}
-      </div>
+      </Alert>
     )
   }
 

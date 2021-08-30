@@ -26,7 +26,7 @@ const App = () => {
     const authUser = useSelector(({ authUser }) => authUser)
     const message = useSelector(({ notification }) => notification)
     const users = useSelector(({ users }) => users)
-    const blogs = useSelector(({ blogs }) => blogs)
+    const blogs = useSelector(({ blogs }) => blogs.sort((a,b) => b.likes - a.likes))
 
     const matchRouteUser = useRouteMatch('/users/:id')
     const matchRouteUserId = matchRouteUser ? matchRouteUser.params.id : null
@@ -69,13 +69,11 @@ const App = () => {
         dispatch(addBlogComment(blogId, comment))
     }
 
-    return <div>
-        <Notification message={message} />
+    return <div className="container">
         {authUser ?
             <div>
                 <Menu authUser={authUser} logOut={logOut}/>
-                <h2>blogs</h2> 
-                
+                <Notification message={message} />
                 <Switch>
                     <Route path='/users/:id'>
                         <UserBlogList user={routeUser} />
@@ -105,13 +103,17 @@ const App = () => {
                         />
                     </Route>
                 </Switch></div> :
-            <LoginForm
-                handleLogin={handleLogin}
-                username={username}
-                password={password}
-                setUsername={setUsername}
-                setPassword={setPassword}
-            />
+            <div>
+                <LoginForm
+                    handleLogin={handleLogin}
+                    username={username}
+                    password={password}
+                    setUsername={setUsername}
+                    setPassword={setPassword}
+                />
+                <Notification message={message} />
+            </div>
+            
         }
     </div>
 };

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react'
 import Blog from './Blog'
-
+import { Form, ListGroup, Button } from 'react-bootstrap'
 
 const BlogWithComment = ({ blog, owned, onLike, onRemove, onCommentSubmit }) => {
     const [comment, setComment] = useState('')
@@ -18,20 +18,18 @@ const BlogWithComment = ({ blog, owned, onLike, onRemove, onCommentSubmit }) => 
             onLike={onLike}
             onRemove={onRemove} />
         <h4>Comments</h4>
-        <form onSubmit={onSubmit}>
-            <input
-                type="text"
-                value={comment}
-                name="comment"
-                onChange={({ target }) => setComment(target.value)}
-            />
-            <button>add comment</button>
-        </form>
-        <ul>
+        <Form onSubmit={onSubmit}>
+            <Form.Group>
+                <Form.Label>Comment</Form.Label>
+                <Form.Control type="text" placeholder="Enter comment" onChange={({ target }) => setComment(target.value)}/>
+            </Form.Group>
+            <Button type="submit" variant="info">Add comment</Button>
+        </Form>
+        <ListGroup variant="flush">
             {
-                blog.comments.map(comment => <li>{comment}</li>)
+                blog.comments.map(comment => <ListGroup.Item>{comment}</ListGroup.Item>)
             }
-        </ul>
+        </ListGroup>
     </div>
 }
 
