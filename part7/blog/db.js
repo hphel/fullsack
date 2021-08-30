@@ -17,7 +17,12 @@ exports.getAllBlogs = function () {
 }
 
 exports.addBlog = function (data, userId) { 
-    return new Blog({...data, user: mongoose.Types.ObjectId(userId)}).save()
+    const createBlog = new Blog({...data, user: mongoose.Types.ObjectId(userId)}).save()
+    
+    return createBlog.then(newBlog => {
+        return User.updateOne({ _id: userId }, 
+            { $push: { blogs: newBlog._id } })
+    }).then(_ => createBlog)
 }
 
 exports.deleteBlog = async function (id, userId) {
@@ -30,7 +35,14 @@ exports.deleteBlog = async function (id, userId) {
 }
 
 exports.updateBlog = function (id, newBlog) {
-    return Blog.findOneAndUpdate({ _id: id }, newBlog, { runValidators: true })
+    return Blog.findOneAndUpdate({ _id: id }, newBlog, { runValidators: true }).populate('user')
+}
+
+exports.addComment = function(id, { comment }) {
+    return Blog.findOneAndUpdate(
+        { _id: id }, 
+        { $push: { comments: comment } }
+    ).populate('user');
 }
 
 exports.saveUser =  function (user) {
@@ -41,7 +53,7 @@ exports.getAllUsers = function () {
     return User.find({}).populate('blogs')
 }
 
-exports.getUser = function(username) {
+exports.getUserByName = function(username) {
     return User.findOne({ username: username })
 }
 

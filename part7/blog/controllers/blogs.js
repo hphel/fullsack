@@ -15,6 +15,16 @@ blogsRouter.post('/', async (request, response, next) => {
     }  
 })
 
+blogsRouter.post('/:blogId/comments', async (request, response, next) => { 
+    try {
+        const result = await db.addComment(request.params.blogId, request.body)
+        response.status(201).json(result)
+    } catch(e) {
+        console.error(e)
+        await next(e)
+    }
+})
+
 blogsRouter.delete('/:blogId', async (request, response, next) => {
     try {
         const result = await db.deleteBlog(request.params.blogId, request.user.id)
